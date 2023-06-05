@@ -1,0 +1,7 @@
+CAMBIARE L'HTTP DEL ROBOT  NELLA PARTE DI BARCHART. 
+
+activate_robot = requests.post('http://192.168.10.77/api/skills/event/'
+
+CAMBIARE SULLA SKILL "LOCALIZATION L'IP ADRESS DEL ROBOT
+
+

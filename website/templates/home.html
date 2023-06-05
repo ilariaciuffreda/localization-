@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}My Home{% endblock %} {% block content %}
+<br />
+<h1  align = 'center'>WELCOME!</h1>
+<br />
+<br />
+<form method ="POST">
+    <h3 align = 'center'>Please enter the Robot IP address</h3>
+    <div class = "form-group">
+        <label for= "IP adress">Robot IP address</label>
+        <input 
+        type = "text"
+        
+        class ="form-control"
+        id = "IP address"
+        name = "IP address"
+        placeholder= "xxx.xxx.xxx.xxx" />
+
+    </div>
+    <button type= "submit" class= "btn btn-primary"> Submit </button>
+</form>
+{% endblock  %}
+    

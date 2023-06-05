@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}questionnaire{% endblock %} 
+{% block content %}
+<h1  align = 'center'>ADL Questionnaire</h1> 
+
+
+   
+
+<form action='/saveanswer' method='POST'>
+   <ol>
+    <br />
+    <br />
+       {% for i in q %}
+           <li>{{i}}</li>
+           {% for j in o[i] %}
+               <input type='radio' value='{{j}}' name='options{{i}}' />{{j}}
+                
+           {% endfor %}
+       {% endfor %}
+       <br />
+     <br />
+   </ol>
+   <input type="submit" value="submit" />
+   
+</form>
+
+
+
+{% endblock  %}
+
+
+
+

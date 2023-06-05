@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Map{% endblock %} 
+{% block content %}
+
+<h1>This is the map of your home </h1>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>  
+<body>
+    <img src ="data:image/jpg;charset=utf-8;base64,{{image_map}}"
+    width="1024"
+        height="768"/>
+  <script> 
+    $(document).ready(function() {
+        $("img").on("click", function(event) {
+            var x = event.pageX - this.offsetLeft;
+            var y = event.pageY - this.offsetTop;
+            alert("X Coordinate: " + x + " Y Coordinate: " + y);
+        });
+    })  
+    </script> 
+</body>
+{% endblock  %}

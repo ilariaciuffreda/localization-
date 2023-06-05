@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+{% block title %}Dashboard
+{% endblock %} 
+{% block content %}
+
+<div class="col-xs-10 col-sm-12 col-md-12">
+    <div class="card card-style mb-2">
+       
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="income_vs_expense"  width="1200" height="800"></canvas>></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<h1 align = 'left'> This is the map of your home</h1>
+<br />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  ></script>
+
+  
+<br />
+<br />
+
+<body>
+  
+<img  id = 'mappa2' src ="data:image/png;base64,{{image}}"
+width="1024"
+    height="768"/>
+
+<canvas id="myCanvas" width="1024" height="768"></canvas>
+
+<script >
+
+//var screenx_id = JSON.parse({{screenx}})
+//var screen_xyz = {{ mydict }};
+//var JSONObject = JSON.parse(screen_xyz);
+//console.log("---------------",JSONObject)
+//consol}e.log("---------------", screenx1)
+                          
+                           
+                        
+                           var obj = {{ datax }}
+                           var obj1 = {{datay}} 
+                           var persx = {{personx}}
+                           var persy ={{persony}} 
+                           count = 0; 
+
+                          // var screenx =  JSON.parse({{screenx}})
+                           console.log(persx [19])
+                           var canvas = document.getElementById('myCanvas');
+                           var context = canvas.getContext('2d');
+                           //console.log(persx)
+                            //var coordinates = canvas.toDataURL("text/plain");
+                            //console.log(" queste sono le coordinates", coordinates)
+                           // var ref = canvas.toDataURL("image/png");
+                        
+                            //console.log(ref)
+                          
+                            var imageObj = document.getElementById("mappa2");
+                            context.drawImage(imageObj,0,0, 1024,768);
+                            var markerObj = new Image();
+                            var personObj = new Image();
+                            //ref.onload = function() {
+                           // context.drawImage(ref, 0, 0, 1024,768);
+                          
+                            //};
+                            for (var i = 0; i< (persx.length)-1; i++){  
+                                context.beginPath(); 
+                                context.moveTo(persx[i], persy[i])
+                                context.lineTo(persx[i+1], persy[i+1])
+                                console.log("i", persx[i])
+                                console.log("i+1", persx[i+1])
+                                context.stroke();
+                            }
+                            personObj.onload = function() {
+                            console.log(persx[20])
+                            context.drawImage(personObj, persx[persx.length -1] , persy[persx.length-1 ], 20,20);
+                            personObj.style['z-index'] = "2";
+                            };
+                            
+                           
+                        
+                            markerObj.onload = function() {
+                            context.drawImage(markerObj,obj,obj1 , 20,20);
+                            markerObj.style['z-index'] = "1";
+                        };
+                        
+                           // imageObj.src = "data:image/png;base64,{{image_map}}";
+                            markerObj.src = "https://cdn-icons-png.flaticon.com/512/773/773330.png"
+                            personObj.src = "https://cdn-icons-png.flaticon.com/512/8946/8946997.png "
+                           // "https://cdn-icons-png.flaticon.com/512/684/684908.png";
+                            var canvas = document.getElementById("myCanvas");
+                            var canvasWidth = canvas.width;
+                            var canvasHeight = canvas.height;
+                            var ctx = canvas.getContext("2d");
+                            var canvasData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);  
+      
+        </script>
+   </form>                  
+</body>    
+    
+
+{% block javascript %}
+
+<script>
+ 
+streamImu(); 
+streamSkillData() ;
+
+
+
+var subscribeMsg = {
+    "Operation": "subscribe", // create a new subscription
+    "Type": "SelfState", // event type to subscribe to
+    "DebounceMs": 2000, // send data every 100 milliseconds
+    "EventName": "localization", // name of this subscription
+  
+    
+  };
+
+var subscribeMsg1 = {
+    "Operation": "subscribe", // create a new subscription
+    "Type": "IMU", // event type to subscribe to
+    "DebounceMs": 2000, // send data every 100 milliseconds
+    "EventName": "IMU1", // name of this subscription
+  
+    
+};
+var subMsg = JSON.stringify(subscribeMsg);
+var subMsg1 = JSON.stringify(subscribeMsg1);
+
+var unsubscribeMsg = {
+    "Operation": "unsubscribe",
+    "EventName": "localization",
+  }
+var unsubscribeMsg1 = {
+    "Operation": "unsubscribe",
+    "EventName": "IMU1",
+  };
+var unsubMsg1 = JSON.stringify(unsubscribeMsg1);
+
+
+function streamSkillData() {
+    //Open a WebSocket connection to Misty
+  var ws = new WebSocket("ws://192.168.0.106/pubsub");
+    ws.onopen = function(event) {
+        console.log("WebSocket opened1.");
+        ws.send(subMsg);
+    }
+
+ //Parse and log SkillData messages
+ ws.onmessage = function(event) {
+    var message = []; 
+    var data = event.data
+    console.log ( data) 
+    //var orientation = JSON.parse(event.data).message;
+    //console.log(orientation) 
+    message.push(JSON.parse(event.data).message.occupancyGridCell);
+    console.log (message);
+    count = 0; 
+    localStorage.setItem('pose', JSON.stringify(message)); 
+    retrievedObject = localStorage.getItem('pose');
+     
+       console.log('retrievedObject of pose: ', JSON.parse(retrievedObject));
+
+            fetch('/barchart',{
+                method: 'POST',
+                credentials: 'omit', 
+                body: JSON.stringify(retrievedObject), 
+                cache: 'no-cache', 
+                headers: new Headers({
+                    "content-type": "application/json"
+                })
+            })
+    count +=1; 
+       fetch('/barchart',{
+                method: 'POST',
+                credentials: 'omit', 
+                body: JSON.stringify(retrievedObject), 
+                cache: 'no-cache', 
+                headers: new Headers({
+                    "content-type": "application/json"
+                })
+            })
+    
+        }
+    
+
+}
+ws.onclose = function(event) {
+      console.log("WebSocket closed.");
+}
+
+function streamImu() {
+    //Open a WebSocket connection to Misty
+  var ws1 = new WebSocket("ws://192.168.0.106/pubsub");
+    ws1.onopen = function(event) {
+        console.log("WebSocket opened22.");
+        ws1.send(subMsg1);
+    }
+
+ //Parse and log SkillData messages
+ ws1.onmessage = function(event) {
+    var data = event.data
+    console.log ("sono qui ")
+    var yaw =JSON.parse(event.data).message.yaw; 
+    localStorage.setItem('yaw', JSON.stringify(yaw)); 
+    retrievedObject1 = localStorage.getItem('yaw');
+    console.log('retrievedObject: ', JSON.parse(parseInt(retrievedObject1)));
+    fetch('/barchart',{
+                method: 'POST',
+                credentials: 'include', 
+                body: JSON.stringify(retrievedObject1), 
+                cache: 'no-cache', 
+                headers: new Headers({
+                    "content-type": "application/json"
+                })
+      })
+
+};
+};
+ws1.onclose = function(event) {
+      console.log("WebSocket closed.");
+}
+
+
+
+
+
+
+
+
+</script>
+<script>
+    //per costruire la dashboard// 
+var labels_id = JSON.parse({{labels | tojson }})
+var values_id = JSON.parse({{ values | tojson }})
+var date_created_id = JSON.parse({{ date_created | tojson }})
+
+Chart.scaleService.updateScaleDefaults('linear', {
+            ticks: {
+                min: 0
+            }
+    });
+
+let income_vs_category_chart = new Chart(income_vs_expense, {
+            type: 'bar',
+            data: {
+                labels: labels_id,
+                datasets: [{
+                    
+                    data: values_id,
+            backgroundColor: ['#5DA5DA ', '#FAA43A', '#60BD68',
+                '#B276B2', '#E16851', '#FB8267'],
+            borderWidth: 1,
+            hoverBorderColor: "black",
+            hoverBorderWidth: 2,
+            hoverBackgroundColor: 'rgba(154, 245, 140)',
+            pointHoverRadius: 5
+        }],
+            },
+        options: {
+                title: {
+                    display: true,
+                        text: "Dashboard of ADL - "+ date_created_id,
+                            fontSize: 20,
+            },
+                legend: {
+                    position: "center",
+                        labels: {
+                        fontColor: "gray"
+                    },
+                    display: true,
+            },
+
+                elements: {
+                    hitRadius: 3,
+            }
+            }
+        })
+       
+    </script>
+    <script>
+        function autoRefresh() {
+            window.location = window.location.href;
+        }
+        setInterval('autoRefresh()', 60000); //la pagina si aggiorna ogni minuto. 
+    </script>
+
+
+{% endblock  %}
+
+
+{% endblock  %}

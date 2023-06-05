@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Map{% endblock %} {% block content %}
+<br />
+<h1 align = 'center'> This is the map of your home</h1>
+<br />
+<h3 align = 'center'>Rooms</h3>   
+ <button class = "btn btn-dark" onclick = "submit_Kitchen();">Kitchen</button>
+ 
+ <button class = "btn btn-dark" onclick = "submit_Bathroom();">Bathroom</button>
+ 
+ <button class = "btn btn-dark" onclick = "submit_LivingRoom();">Living Room</button>
+ 
+ <button class = "btn btn-dark" onclick = "submit_Bedroom();">Bedroom</button>
+ 
+ <button class = "btn btn-success"  onclick = "seemap();">See Constructed Map</button>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  ></script>
+<br />
+<br />
+<body>
+    <img src ="data:image/png;base64,{{image_map}}"
+width="1024"
+    height="768"/>
+
+    <script> 
+        $(document).ready(function() {
+            i = 0
+            var points = [];
+            $("img").on("click", function(event) {
+                
+                var x = event.pageX - this.offsetLeft;
+                var y = event.pageY - this.offsetTop;
+                alert("X Coordinate: " + x + " Y Coordinate: " + y);
+               
+                
+                points[i] =  [x,y];
+                
+                i = i+1; 
+               
+                alert(points)
+                console.log(points)
+                localStorage.setItem('point', JSON.stringify(points)); 
+                
+            })
+        } );          
+        function submit_Kitchen(){
+            retrievedObject = localStorage.getItem('point');
+            console.log('retrievedObject: ', JSON.parse(retrievedObject));
+            points = [];
+            i = 0; 
+            fetch('/Kitchen',{
+                method: 'POST', 
+                credentials: 'include', 
+                body: JSON.stringify(retrievedObject), 
+                cache: 'no-cache', 
+                headers: new Headers({
+                    "content-type": "application/json"
+                })
+            })
+        } 
+        function submit_Bathroom(){
+            retrievedObject = localStorage.getItem('point');
+            console.log('retrievedObject: ', JSON.parse(retrievedObject));
+            points = [];
+            i = 0; 
+            fetch('/Bathroom',{
+                method: 'POST', 
+                credentials: 'include', 
+                body: JSON.stringify(retrievedObject), 
+                cache: 'no-cache', 
+                headers: new Headers({
+                    "content-type": "application/json"
+                })
+            })
+        } 
+        function submit_LivingRoom(){
+            retrievedObject = localStorage.getItem('point');
+            console.log('retrievedObject: ', JSON.parse(retrievedObject));
+            points = [];
+            i = 0; 
+            fetch('/LivingRoom',{
+                method: 'POST', 
+                credentials: 'include', 
+                body: JSON.stringify(retrievedObject), 
+                cache: 'no-cache', 
+                headers: new Headers({
+                    "content-type": "application/json"
+                })
+            })
+        } 
+        function submit_Bedroom(){
+            retrievedObject = localStorage.getItem('point');
+            console.log('retrievedObject: ', JSON.parse(retrievedObject));
+            points = [];
+            i = 0; 
+            fetch('/Bedroom',{
+                method: 'POST', 
+                credentials: 'include', 
+                body: JSON.stringify(retrievedObject), 
+                cache: 'no-cache', 
+                headers: new Headers({
+                    "content-type": "application/json"
+                })
+            })
+        }      
+        function seemap(){
+            
+            fetch('/createmap',{
+                method: 'POST', 
+                credentials: 'include', 
+                
+                cache: 'no-cache', 
+                headers: new Headers({
+                    "content-type": "application/json"
+                })
+            })
+        }        
+    
+</script>
+
+
+
+</body>
+
+{% endblock  %}
